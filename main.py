@@ -10,7 +10,7 @@ def input_command():
         audio = r.listen(source)
         try:
             print("Interpreting....")
-            query = r.recognize_google(audio, language = "en-in")
+            query = r.recognize_google(audio, language="en-in")
             print(f"user said: {query}")
         except Exceptionn as e:
             print("I did not get that what you are saying, can you say it again? ")
@@ -18,4 +18,8 @@ def input_command():
         return query
 
 
-
+def say(text):
+    print(f"Speaking: {text}")
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
