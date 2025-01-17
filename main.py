@@ -25,13 +25,20 @@ def say(text):
     engine.runAndWait()
 
 
+def terminate(query):
+    say("I am going to close this program. Thank you, sir.......")
+    exit()
+
+
 def main():
-    say("hey vinesh how are you? , I am you personal assistant ")
+    say("hey boss how are you? , I am you personal assistant ")
     while True:
         print("Listening...")
         query = input_command()
         if query == 'none':
             continue
+        if query == "terminate the program":
+            terminate(query)
 
 
 if __name__ == "__main__":
