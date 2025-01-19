@@ -1,6 +1,12 @@
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
+from selenium import webdriver
+
+#for accessing sites and manipulates using voice commands
+from selenium.webdriver.common.keys import keys
+from selenium.webdriver.common.by import By
+import time
 
 
 def input_command():
@@ -28,6 +34,13 @@ def say(text):
 def terminate(query):
     say("I am going to close this program. Thank you, sir.......")
     exit()
+
+
+def set_Driver():
+    driver = webdriver.Chrome()
+    return driver
+
+
 
 
 def main():
