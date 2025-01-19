@@ -1,9 +1,9 @@
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
-from selenium import webdriver
-
 #for accessing sites and manipulates using voice commands
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import keys
 from selenium.webdriver.common.by import By
 import time
@@ -39,6 +39,15 @@ def terminate(query):
 def set_Driver():
     driver = webdriver.Chrome()
     return driver
+
+
+def open_youtube (driver):
+    driver.get("https://www.youtube.com/")
+    timer.sleep(3)
+
+
+
+
 
 
 
