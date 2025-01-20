@@ -1,25 +1,22 @@
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
-#for accessing sites and manipulates using voice commands
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.keys import keys
-from selenium.webdriver.common.by import By
-import time
+from youtubesearchpython import VideosSearch
+import webbrowser
 
 
 def input_command():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         r.pause_threshold = 1
+        print("Listening...")
         audio = r.listen(source)
         try:
             print("Interpreting....")
             query = r.recognize_google(audio, language="en-in")
             print(f"user said: {query}")
         except Exception as e:
-            say("I did not get that what you are saying, can you say it again? ")
+            say("I did not get that. Can you say it again?")
             return "none"
         return query
 
@@ -31,36 +28,71 @@ def say(text):
     engine.runAndWait()
 
 
-def terminate(query):
-    say("I am going to close this program. Thank you, sir.......")
+def terminate():
+    say("I am going to close this program. Thank you, sir.")
     exit()
 
 
-def set_Driver():
-    driver = webdriver.Chrome()
-    return driver
+def open_youtube(query):
+    try:
+
+        videos_search = VideosSearch(query, limit=5)
+        results = videos_search.result()['result']
+        if results:
+            say("Here are the top 5 results:")
+            for i, video in enumerate(results, start=1):
+                print(f"{i}. {video['title']} ({video['duration']}) - {video['link']}")
+            say("Please say the number of the video you'd like to play, for example, 'play 1'.")
+            choice = input_command().lower()
+            if 'play' in choice:
+                try:
+                    video_number = int(choice.split()[-1]) - 1
+                    if 0 <= video_number < len(results):
+                        selected_video = results[video_number]
+                        say(f"Playing: {selected_video['title']}")
+                        return selected_video['link']
+                    else:
+                        say("Invalid choice. Playing the first video.")
+                        return results[0]['link']
+                except ValueError:
+                    say("I couldn't understand the number. Playing the first video.")
+                    return results[0]['link']
+            else:
+                say("Invalid input. Playing the first video.")
+                return results[0]['link']
+        else:
+            say("No results found.")
+            return None
+    except Exception as e:
+        say(f"Error during advanced search: {e}")
+        return None
 
 
-def open_youtube (driver):
-    driver.get("https://www.youtube.com/")
-    timer.sleep(3)
-
-
-
-
-
-
+def play_video(url):
+    if url:
+        webbrowser.open(url)
+        say("Video opened in the browser.")
+    else:
+        say("Could not open the video.")
 
 
 def main():
-    say("hey boss how are you? , I am you personal assistant ")
+    say("Hey boss, how are you? I am your personal assistant.")
     while True:
-        print("Listening...")
-        query = input_command()
+        query = input_command().lower()
         if query == 'none':
             continue
-        if query == "terminate the program":
-            terminate(query)
+        if "terminate the program" in query:
+            terminate()
+        elif "open youtube" in query:
+            say("What video would you like to search for?")
+            search_query = input_command().lower()
+            if search_query == 'none':
+                continue
+            video_url = open_youtube(search_query)
+            play_video(video_url)
+        else:
+            say("I didn't understand. Please say 'open youtube' or 'terminate the program'.")
 
 
 if __name__ == "__main__":
