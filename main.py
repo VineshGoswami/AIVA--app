@@ -3,6 +3,7 @@ import pyttsx3
 import speech_recognition as sr
 from youtubesearchpython import VideosSearch
 import webbrowser
+import pyautogui
 
 
 def input_command():
@@ -35,7 +36,7 @@ def terminate():
 
 def open_youtube(query):
     try:
-
+        # Perform YouTube search
         videos_search = VideosSearch(query, limit=5)
         results = videos_search.result()['result']
         if results:
@@ -76,6 +77,14 @@ def play_video(url):
         say("Could not open the video.")
 
 
+def close_youtube(query):
+    try:
+        pyautogui.hotkey('alt', 'f4')
+        say("Closing YouTube, sir.")
+    except Exception as e:
+        say(f"Error closing YouTube: {e}")
+
+
 def main():
     say("Hey boss, how are you? I am your personal assistant.")
     while True:
@@ -91,8 +100,11 @@ def main():
                 continue
             video_url = open_youtube(search_query)
             play_video(video_url)
+        elif "close youtube" in query:
+            close_youtube(query)
+
         else:
-            say("I didn't understand. Please say 'open youtube' or 'terminate the program'.")
+            say("I didn't understand that. Please say 'open youtube', 'close youtube', or 'terminate the program'.")
 
 
 if __name__ == "__main__":
