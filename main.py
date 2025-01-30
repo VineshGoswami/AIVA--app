@@ -2,6 +2,7 @@ import pyaudio
 import pyttsx3
 import speech_recognition as sr
 from wiki import wiki_search
+from goog import goog_search
 
 
 def input_command():
@@ -46,6 +47,14 @@ def main():
                 print(result)
             else:
                 say(f"sorry sir i can't search{query}")
+        elif "google search for " in query:
+            topic1 = query.replace("google search for ", "").strip()
+            if topic1:
+                result = goog_search(topic1)
+                # say(result)
+                print(result)
+            else:
+                say(f"sorry we cannot find this {result}")
         elif "terminate the program" in query:
             terminate()
 
