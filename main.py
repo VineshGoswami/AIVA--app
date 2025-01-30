@@ -4,6 +4,7 @@ import speech_recognition as sr
 from youtubesearchpython import VideosSearch
 import webbrowser
 import pyautogui
+import keyboard
 
 
 def input_command():
@@ -27,6 +28,25 @@ def say(text):
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
+
+
+listening = False
+
+
+def start_listen():
+    global listening
+    listening = True
+    print("listening to you sir")
+
+
+def pause_listen():
+    global listening
+    listening = False
+    print(" now pausing my self")
+
+
+keyboard.add_hotkey("ctrl + alt + k", start_listen)
+keyboard.add_hotkey("ctrl + alt + p", pause_listen)
 
 
 def terminate():
@@ -65,7 +85,7 @@ def open_youtube(query):
             say("No results found.")
             return None
     except Exception as e:
-        say(f"Error during advanced search: {e}")
+        say(f"Error during search: {e}")
         return None
 
 
@@ -88,23 +108,24 @@ def close_youtube(query):
 def main():
     say("Hey boss, how are you? I am your personal assistant.")
     while True:
-        query = input_command().lower()
-        if query == 'none':
-            continue
-        if "terminate the program" in query:
-            terminate()
-        elif "open youtube" in query:
-            say("What video would you like to search for?")
-            search_query = input_command().lower()
-            if search_query == 'none':
+        if listening:
+            query = input_command().lower()
+            if query == 'none':
                 continue
-            video_url = open_youtube(search_query)
-            play_video(video_url)
-        elif "close youtube" in query:
-            close_youtube(query)
+            if "terminate the program" in query:
+                terminate()
+            elif "open youtube" in query:
+                say("What video would you like to search for?")
+                search_query = input_command().lower()
+                if search_query == 'none':
+                    continue
+                video_url = open_youtube(search_query)
+                play_video(video_url)
+            elif "close youtube" in query:
+                close_youtube(query)
 
-        else:
-            say("I didn't understand that. Please say 'open youtube', 'close youtube', or 'terminate the program'.")
+            else:
+                say("I didn't understand that. Please say 'open youtube', 'close youtube', or 'terminate the program'.")
 
 
 if __name__ == "__main__":
