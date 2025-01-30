@@ -1,8 +1,7 @@
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
-import webbrowser
-import pyautogui
+from wiki import wiki_search
 
 
 def input_command():
@@ -39,7 +38,15 @@ def main():
         query = input_command().lower()
         if query == 'none':
             continue
-        if "terminate the program" in query:
+        elif "search wikipedia for " in query.lower():
+            topic = query.replace("search wikipedia for ", "").strip()
+            if topic:
+                result = wiki_search(topic)
+                say(result)
+                print(result)
+            else:
+                say(f"sorry sir i can't search{query}")
+        elif "terminate the program" in query:
             terminate()
 
 
