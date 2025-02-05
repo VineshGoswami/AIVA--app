@@ -11,4 +11,4 @@ def wiki_search(query):
 
         return result
     except Exception as e:
-        say(f"could not find anything about on this topic{e}")
+        print(f"could not find anything about on this topic{e}")
