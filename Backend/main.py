@@ -3,6 +3,7 @@ import pyttsx3
 import speech_recognition as sr
 from wiki import wiki_search
 from goog import goog_search
+from open_App import open_app
 
 
 def input_command():
@@ -39,7 +40,8 @@ def main():
         query = input_command().lower()
         if query == 'none':
             continue
-        elif "search wikipedia for " in query.lower():
+        open_app(query)
+        if "search wikipedia for " in query.lower():
             topic = query.replace("search wikipedia for ", "").strip()
             if topic:
                 result = wiki_search(topic)
@@ -57,6 +59,7 @@ def main():
                 say(f"sorry we cannot find this {result}")
         elif "terminate the program" in query:
             terminate()
+            break
 
 
 if __name__ == "__main__":
