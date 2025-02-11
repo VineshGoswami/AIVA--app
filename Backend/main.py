@@ -4,6 +4,7 @@ import speech_recognition as sr
 from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
+import pyautogui
 
 
 def input_command():
@@ -29,6 +30,11 @@ def say(text):
     engine.runAndWait()
 
 
+def take_screenshot(query):
+    im = pyautogui.screenshot()
+    im.save("screenshot.jpg")
+
+
 def terminate():
     say("I am going to close this program. Thank you, sir.")
     exit()
@@ -40,7 +46,7 @@ def main():
         query = input_command().lower()
         if query == 'none':
             continue
-        open_app(query)
+     
         if "search wikipedia for " in query.lower():
             topic = query.replace("search wikipedia for ", "").strip()
             if topic:
@@ -49,6 +55,7 @@ def main():
                 print(result)
             else:
                 say(f"sorry sir i can't search{query}")
+
         elif "google search for " in query:
             topic1 = query.replace("google search for ", "").strip()
             if topic1:
@@ -57,6 +64,20 @@ def main():
                 print(result)
             else:
                 say(f"sorry we cannot find this {result}")
+
+        elif "screenshot" in query.lower():
+            say("processing your command..")
+            take_screenshot(query)
+
+        elif "open app" in query:
+            if query.strip() == "open app":
+                say("Which application would you like to open?")
+                app_name = input_command().lower().strip()
+                if app_name == "none" or app_name == "":
+                    say("No application name provided.")
+                else:
+                    open_app(app_name)
+
         elif "terminate the program" in query:
             terminate()
             break
