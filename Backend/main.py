@@ -6,7 +6,7 @@ from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
 import pyautogui
-
+import subprocess
 
 listening = False
 
@@ -20,7 +20,7 @@ def listen():
 def stop():
     global listening
     listening = False
-    print("sopped listening")
+    print("stopped listening")
 
 
 keyboard.add_hotkey('ctrl+k', listen)
@@ -75,13 +75,12 @@ def main():
                     say(result)
                     print(result)
                 else:
-                    say(f"sorry sir i can't search{query}")
+                    say(f"sorry sir i can't search {query}")
 
             elif "google search for " in query:
                 topic1 = query.replace("google search for ", "").strip()
                 if topic1:
                     result = goog_search(topic1)
-                    # say(result)
                     print(result)
                 else:
                     say(f"sorry we cannot find this {result}")
@@ -98,6 +97,22 @@ def main():
                         say("No application name provided.")
                     else:
                         open_app(app_name)
+
+            elif "answer these questions" in query.lower():
+                say("Sure, what question would you like me to answer?")
+                user_question = input_command().lower().strip()
+                if user_question == "none" or user_question == "":
+                    say("No question detected. Please try again.")
+                else:
+                    say("Processing your request, sir...")
+                    print(f"Debug: Running bot.py with query - {user_question}")
+                    result = subprocess.run(
+                        ["python", "C:\\Users\\vines\\Aiva_project\\Backend\\bot.py", user_question],
+                        capture_output=True, text=True)
+                    print(f"Debug: bot.py output - {result.stdout}")
+                    gemini_response = result.stdout.strip().replace("*", "")
+                    if gemini_response and "i am sorry" not in gemini_response.lower():
+                        say(gemini_response)
 
             elif "terminate the program" in query:
                 terminate()
