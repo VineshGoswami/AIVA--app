@@ -99,11 +99,15 @@ def main():
                         open_app(app_name)
 
             elif "answer these questions" in query.lower():
-                say("Sure, what question would you like me to answer?")
-                user_question = input_command().lower().strip()
-                if user_question == "none" or user_question == "":
-                    say("No question detected. Please try again.")
-                else:
+                say("Sure, you can start asking me questions now. Say 'exit chat' to stop.")
+                while True:
+                    user_question = input_command().lower().strip()
+                    if user_question in ["exit chat", "stop chat", "terminate chat"]:
+                        say("Exiting chat mode, sir.")
+                        break
+                    if user_question == "none" or user_question == "":
+                        say("No question detected. Please try again.")
+                        continue
                     say("Processing your request, sir...")
                     print(f"Debug: Running bot.py with query - {user_question}")
                     result = subprocess.run(
@@ -113,7 +117,6 @@ def main():
                     gemini_response = result.stdout.strip().replace("*", "")
                     if gemini_response and "i am sorry" not in gemini_response.lower():
                         say(gemini_response)
-
             elif "terminate the program" in query:
                 terminate()
                 break
