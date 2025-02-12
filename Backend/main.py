@@ -1,3 +1,4 @@
+import keyboard
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
@@ -5,6 +6,25 @@ from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
 import pyautogui
+
+
+listening = False
+
+
+def listen():
+    global listening
+    listening = True
+    print("listening sir..")
+
+
+def stop():
+    global listening
+    listening = False
+    print("sopped listening")
+
+
+keyboard.add_hotkey('ctrl+k', listen)
+keyboard.add_hotkey('ctrl+p', stop)
 
 
 def input_command():
@@ -43,44 +63,45 @@ def terminate():
 def main():
     say("Hey boss, how are you? I am your personal assistant.")
     while True:
-        query = input_command().lower()
-        if query == 'none':
-            continue
-     
-        if "search wikipedia for " in query.lower():
-            topic = query.replace("search wikipedia for ", "").strip()
-            if topic:
-                result = wiki_search(topic)
-                say(result)
-                print(result)
-            else:
-                say(f"sorry sir i can't search{query}")
+        if listening:
+            query = input_command().lower()
+            if query == 'none':
+                continue
 
-        elif "google search for " in query:
-            topic1 = query.replace("google search for ", "").strip()
-            if topic1:
-                result = goog_search(topic1)
-                # say(result)
-                print(result)
-            else:
-                say(f"sorry we cannot find this {result}")
-
-        elif "screenshot" in query.lower():
-            say("processing your command..")
-            take_screenshot(query)
-
-        elif "open app" in query:
-            if query.strip() == "open app":
-                say("Which application would you like to open?")
-                app_name = input_command().lower().strip()
-                if app_name == "none" or app_name == "":
-                    say("No application name provided.")
+            if "search wikipedia for " in query.lower():
+                topic = query.replace("search wikipedia for ", "").strip()
+                if topic:
+                    result = wiki_search(topic)
+                    say(result)
+                    print(result)
                 else:
-                    open_app(app_name)
+                    say(f"sorry sir i can't search{query}")
 
-        elif "terminate the program" in query:
-            terminate()
-            break
+            elif "google search for " in query:
+                topic1 = query.replace("google search for ", "").strip()
+                if topic1:
+                    result = goog_search(topic1)
+                    # say(result)
+                    print(result)
+                else:
+                    say(f"sorry we cannot find this {result}")
+
+            elif "screenshot" in query.lower():
+                say("processing your command..")
+                take_screenshot(query)
+
+            elif "open app" in query:
+                if query.strip() == "open app":
+                    say("Which application would you like to open?")
+                    app_name = input_command().lower().strip()
+                    if app_name == "none" or app_name == "":
+                        say("No application name provided.")
+                    else:
+                        open_app(app_name)
+
+            elif "terminate the program" in query:
+                terminate()
+                break
 
 
 if __name__ == "__main__":
