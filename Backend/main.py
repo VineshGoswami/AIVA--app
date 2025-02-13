@@ -26,7 +26,7 @@ def stop():
     print("stopped listening")
 
 
-keyboard.add_hotkey('ctrl+k', listen)
+keyboard.add_hotkey('ctrl+l', listen)
 keyboard.add_hotkey('ctrl+p', stop)
 
 
@@ -123,15 +123,12 @@ def main():
 
             elif "latest news" in query:
                 say("Fetching the latest news for you, sir.")
-
                 result = subprocess.run(
                     ["python", "C:\\Users\\vines\\Aiva_project\\Backend\\news.py"],
                     capture_output=True, text=True, encoding="utf-8"
                 )
-
                 output = result.stdout.strip()
                 print(f"Debug: Raw output from news.py: {output}")
-
                 try:
                     news_articles = json.loads(output)
 
@@ -148,7 +145,7 @@ def main():
                     say("An error occurred while fetching the news. The response was not in the correct format.")
                     print("Error: Failed to parse JSON.")
 
-            elif "show date and time " in query.lower():
+            elif "show date and time" in query.lower():
                 show_time()
                 show_date()
 
