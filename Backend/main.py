@@ -6,6 +6,7 @@ from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
 from function import show_date, show_time, find_and_open, delete_item, save_item
+from music import open_spotify, play_song, pause_song, resume_song, next_song, previous_song, create_playlist
 from you import open_youtube
 import pyautogui
 import subprocess
@@ -174,6 +175,39 @@ def main():
 
             elif "play video" in query.lower():
                 open_youtube(query)
+            elif "open spotify" in query:
+                say("Opening Spotify for you, sir.")
+                open_spotify()
+
+            elif "play song" in query:
+                say("Which song would you like to play?")
+                song_name = input_command().lower().strip()
+                if song_name:
+                    say(f"Playing {song_name}.")
+                    play_song(song_name)
+
+            elif "pause song" in query:
+                say("Pausing the song.")
+                pause_song()
+
+            elif "resume song" in query:
+                say("Resuming playback.")
+                resume_song()
+
+            elif "next song" in query:
+                say("Skipping to the next song.")
+                next_song()
+
+            elif "previous song" in query:
+                say("Going back to the previous song.")
+                previous_song()
+
+            elif "create playlist" in query:
+                say("What should be the name of the playlist?")
+                playlist_name = input_command().lower().strip()
+                if playlist_name:
+                    message = create_playlist(playlist_name)
+                    say(message)
 
             elif "terminate the program" in query:
                 terminate()
