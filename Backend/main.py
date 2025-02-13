@@ -5,8 +5,11 @@ import speech_recognition as sr
 from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
+from function import show_date, show_time
 import pyautogui
 import subprocess
+import json
+
 
 listening = False
 
@@ -117,6 +120,38 @@ def main():
                     gemini_response = result.stdout.strip().replace("*", "")
                     if gemini_response and "i am sorry" not in gemini_response.lower():
                         say(gemini_response)
+
+            elif "latest news" in query:
+                say("Fetching the latest news for you, sir.")
+
+                result = subprocess.run(
+                    ["python", "C:\\Users\\vines\\Aiva_project\\Backend\\news.py"],
+                    capture_output=True, text=True, encoding="utf-8"
+                )
+
+                output = result.stdout.strip()
+                print(f"Debug: Raw output from news.py: {output}")
+
+                try:
+                    news_articles = json.loads(output)
+
+                    if isinstance(news_articles, dict) and "error" in news_articles:
+                        say(news_articles["error"])
+                    elif news_articles:
+                        say("Here are the top 5 news headlines.")
+                        for news in news_articles:
+                            say(news["title"])
+                            print(f"Title: {news['title']}\nDescription: {news['description']}\n")
+                    else:
+                        say("I couldn't fetch any news at the moment.")
+                except json.JSONDecodeError:
+                    say("An error occurred while fetching the news. The response was not in the correct format.")
+                    print("Error: Failed to parse JSON.")
+
+            elif "show date and time " in query.lower():
+                show_time()
+                show_date()
+
             elif "terminate the program" in query:
                 terminate()
                 break
