@@ -6,10 +6,10 @@ from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
 from function import show_date, show_time, find_and_open, delete_item, save_item
+from you import open_youtube
 import pyautogui
 import subprocess
 import json
-
 
 listening = False
 
@@ -171,6 +171,9 @@ def main():
                     new_name = input_command().lower().strip()
                     if new_name:
                         save_item(item_name, new_name)
+
+            elif "play video" in query.lower():
+                open_youtube(query)
 
             elif "terminate the program" in query:
                 terminate()
