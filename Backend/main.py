@@ -5,7 +5,7 @@ import speech_recognition as sr
 from wiki import wiki_search
 from goog import goog_search
 from open_App import open_app
-from function import show_date, show_time
+from function import show_date, show_time, find_and_open, delete_item, save_item
 import pyautogui
 import subprocess
 import json
@@ -26,7 +26,7 @@ def stop():
     print("stopped listening")
 
 
-keyboard.add_hotkey('ctrl+l', listen)
+keyboard.add_hotkey('ctrl+v', listen)
 keyboard.add_hotkey('ctrl+p', stop)
 
 
@@ -148,6 +148,29 @@ def main():
             elif "show date and time" in query.lower():
                 show_time()
                 show_date()
+
+            elif "system" in query.lower():
+                say("name for searching an file or folder ")
+                name = input_command().lower().strip()
+                if name == "none" or name == "":
+                    say("no file or folder exist in system")
+                else:
+                    find_and_open(name)
+
+            elif "delete" in query:
+                say("Which file or folder would you like to delete?")
+                item_name = input_command().lower().strip()
+                if item_name:
+                    delete_item(item_name)
+
+            elif "save" in query:
+                say("Which file or folder would you like to rename?")
+                item_name = input_command().lower().strip()
+                if item_name:
+                    say("What should be the new name?")
+                    new_name = input_command().lower().strip()
+                    if new_name:
+                        save_item(item_name, new_name)
 
             elif "terminate the program" in query:
                 terminate()
