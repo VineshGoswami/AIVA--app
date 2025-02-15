@@ -51,9 +51,9 @@ def captureface():
             continue
         cv2.imshow("Face Capture - Press SPACE to capture", frame)
         key = cv2.waitKey(1) & 0xFF
-        if key == 32:  # SPACE to capture
+        if key == 32:
             break
-        elif key == 27:  # ESC to cancel
+        elif key == 27:
             cap.release()
             cv2.destroyAllWindows()
             return None
