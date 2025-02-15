@@ -1,5 +1,6 @@
 import pymongo
 from datetime import datetime
+import bcrypt
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client['AivaDB']
@@ -22,5 +23,19 @@ def getchathistory(username):
     return list(chat_collection.find({"username": username}, {"_id": 0}))
 
 
-if __name__ == "__main__":
-    print("Welcome to PyMongo")
+def add_user(username, password):
+    existing_user = user_collection.find_one({"username": username})
+    if existing_user:
+        return "Username already exists."
+
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    user_collection.insert_one({"username": username, "password": hashed_password})
+    return "User registered successfully."
+
+
+def verify_user(username, password):
+
+    user = user_collection.find_one({"username": username})
+    if user and bcrypt.checkpw(password.encode('utf-8'), user["password"]):
+        return True
+    return False
