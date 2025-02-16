@@ -7,7 +7,7 @@ from goog import goog_search
 from open_App import open_app
 from function import show_date, show_time, find_and_open, delete_item, save_item
 from music import open_spotify, play_song, pause_song, resume_song, next_song, previous_song, create_playlist
-from llm import generate_llm_response
+from llm import generate_llm_response,get_factual_answer
 from you import open_youtube
 import pyautogui
 import subprocess
@@ -250,6 +250,23 @@ def main():
                 if playlist_name:
                     message = create_playlist(playlist_name)
                     say(message)
+
+            elif "hey what's up" in query:
+                say("What would you like to ask the AI?")
+                llm_prompt = input_command().lower().strip()
+                if llm_prompt:
+                    generative_response = generate_llm_response("Answer concisely: " + llm_prompt)
+
+                    context = ("Narendra Modi is the Prime Minister of India, serving since 2014. "
+                               "He leads the Bharatiya Janata Party and has been influential in Indian politics.")
+
+                    factual_response = get_factual_answer(llm_prompt, context)
+                    combined_response = ("Generative Response: " + generative_response +
+                                         "\nFactual Response: " + factual_response)
+                    say(combined_response)
+                    print(combined_response)
+                else:
+                    say("No prompt detected for the LLM.")
 
             elif "terminate the program" in query:
                 terminate()
