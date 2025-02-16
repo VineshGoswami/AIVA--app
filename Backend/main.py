@@ -71,40 +71,52 @@ def terminate():
 
 def authenticate_user():
     global username
-    say("Welcome to AIVA Assistant!")
+    print("Welcome to AIVA Assistant Login System")
 
     while True:
-        print("\n1. Register\n2. Login (Password)\n3. Login (Face Recognition)")
+        print("\n1. Signup\n2. Login (Password + Face Recognition)\n3. Exit")
         choice = input("Enter choice: ").strip()
 
         if choice == "1":
-            username = input("Enter a new username: ").strip()
-            password = input("Enter a new password: ").strip()
-            face_image_path = input("Enter image path for face registration (optional, press Enter to skip): ").strip()
+            username = input("Enter username: ").strip()
+            password = input("Enter password: ").strip()
+            image_path = input("Enter image path for face recognition: ").strip()
+            security_question = input("Enter security question: ").strip()
+            security_answer = input("Enter answer to security question: ").strip()
 
-            message = register(username, password, face_image_path if face_image_path else None)
-            say(message)
-            if "successful" in message:
-                break
+            message = register(username, password, image_path, security_question, security_answer)
+            print(message)
 
         elif choice == "2":
             username = input("Enter username: ").strip()
             password = input("Enter password: ").strip()
-            message = login(username, password=password, use_face=False)
-            print(message)
-            if "successful" in message:
+
+            login_status = login(username, password)
+            if login_status == f"Login successful. Welcome, {username}!":
+                print(login_status)
                 break
+            elif login_status == "Face not matched":
+                print("Face recognition failed. Please answer the security question.")
+                security_question = get_security_question(username)
+                if security_question:
+                    print(f"Security Question: {security_question}")
+                    answer = input("Enter your answer: ").strip()
+                    if verify_security_answer(username, answer):
+                        print(f"Login successful via security question. Welcome, {username}!")
+                        break
+                    else:
+                        print("Incorrect security answer.")
+                else:
+                    print("No security question found for this user.")
+            else:
+                print(login_status)
 
         elif choice == "3":
-            username = input("Enter username: ").strip()
-            image_path = input("Enter image path for face authentication: ").strip()
-            message = login(username, use_face=True, image_path=image_path)
-            say(message)
-            if "successful" in message:
-                break
+            print("Exiting...")
+            break
 
         else:
-            say("Invalid choice. Try again.")
+            print("Invalid option. Please choose again.")
 
 
 def main():
