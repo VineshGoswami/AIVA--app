@@ -68,7 +68,7 @@ def captureface():
     return facelandmarks(frame_rgb)
 
 
-def register(username, password, img_path=None):
+def register(username, password, img_path=None, security_question=None, security_answer=None):
     if users_collection.find_one({"username": username}):
         return "Username already exists. Choose another."
 
@@ -80,14 +80,17 @@ def register(username, password, img_path=None):
         if face_data is None or face_data.size == 0:
             return "No face detected. Try another image."
 
+    hashed_answer = bcrypt.hashpw(security_answer.encode(), bcrypt.gensalt()) if security_answer else None
+
     users_collection.insert_one({
         "username": username,
         "password": hashed_pwd,
-        "face_encoding": pickle.dumps(face_data) if face_data is not None else None
+        "face_encoding": pickle.dumps(face_data) if face_data is not None else None,
+        "security_question": security_question,
+        "security_answer": hashed_answer
     })
 
     print("Signup successful! You must log in again to continue.")
-
 
     while True:
         print("Login Options:")
@@ -108,7 +111,7 @@ def register(username, password, img_path=None):
         print(login_message)
 
         if "Login successful" in login_message:
-            print("\n Starting AIVA...")
+            print("\nStarting AIVA...")
             return login_message
         else:
             print("Authentication failed. Try again.")
@@ -124,6 +127,20 @@ def faceverify(stored_data):
 
     distance = np.linalg.norm(stored_data - live_data)
     return distance < 0.6
+
+
+def get_security_question(username):
+    user_data = users_collection.find_one({"username": username})
+    if user_data and "security_question" in user_data:
+        return user_data["security_question"]
+    return None
+
+
+def verify_security_answer(username, answer):
+    user_data = users_collection.find_one({"username": username})
+    if user_data and "security_answer" in user_data:
+        return bcrypt.checkpw(answer.encode(), user_data["security_answer"])
+    return False
 
 
 def login(username, password=None, use_face=False, image_path=None):
@@ -151,7 +168,16 @@ def login(username, password=None, use_face=False, image_path=None):
         if distance < 0.6:
             return f"Login successful. Welcome, {username}!"
         else:
-            return "Face authentication failed. Try again."
+            print("Face authentication failed. Answer security question.")
+            security_question = get_security_question(username)
+            if security_question:
+                print(f"Security Question: {security_question}")
+                answer = input("Enter your answer: ").strip()
+                if verify_security_answer(username, answer):
+                    return f"Login successful via security question. Welcome, {username}!"
+                else:
+                    return "Incorrect security answer."
+            return "Face authentication failed."
 
     else:
         if not bcrypt.checkpw(password.encode(), user_data["password"]):
